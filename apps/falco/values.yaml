@@ -1,0 +1,29 @@
+driver:
+  kind: modern_ebpf
+
+falco:
+  grpc:
+    enabled: true
+  grpc_output:
+    enabled: true
+  json_output: true
+  log_level: info
+  rules_file:
+    - /etc/falco/falco_rules.yaml
+    - /etc/falco/falco_rules.local.yaml
+
+falcosidekick:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/control-plane
+    operator: Exists
