@@ -35,8 +35,10 @@ alertmanager:
         memory: 128Mi
 
 nodeExporter:
+  enabled: false
+
+kubeStateMetrics:
   enabled: true
-  hostRootfs: false
 
 prometheusOperator:
   resources:
