@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: calico
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: git@gitlab.com:bc-devops/platform-lab.git
+    targetRevision: develop
+    path: apps/calico
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: calico-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
