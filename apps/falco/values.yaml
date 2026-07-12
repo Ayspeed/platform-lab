@@ -8,9 +8,6 @@ falco:
     enabled: true
   json_output: true
   log_level: info
-  rules_file:
-    - /etc/falco/falco_rules.yaml
-    - /etc/falco/falco_rules.local.yaml
 
 falcosidekick:
   enabled: false
