@@ -1,0 +1,33 @@
+global:
+  domain: argocd.platform.lab
+
+server:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hostname: argocd.platform.lab
+    tls: true
+
+configs:
+  params:
+    server.insecure: false
+
+repoServer:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+applicationSet:
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+notifications:
+  enabled: false
