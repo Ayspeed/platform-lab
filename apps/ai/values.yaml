@@ -1,6 +1,7 @@
 ollama:
   models:
-    - mistral
+    pull:
+      - mistral
 
 replicaCount: 1
 
