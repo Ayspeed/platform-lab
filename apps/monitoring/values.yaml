@@ -36,9 +36,7 @@ alertmanager:
 
 nodeExporter:
   enabled: true
-
-kubeStateMetrics:
-  enabled: true
+  hostRootfs: false
 
 prometheusOperator:
   resources:

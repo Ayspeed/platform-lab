@@ -22,6 +22,10 @@ spec:
               - argocd
               - cert-manager
               - kyverno
+              - monitoring
+              - falco
+              - trivy-system
+              - ai
       validate:
         message: "Les resource limits CPU et memory sont requises."
         pattern:
