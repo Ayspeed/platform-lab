@@ -1,0 +1,55 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  commit-and-branch-check:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check branch name
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          echo "Branch: $BRANCH"
+          # Autorisé : feat/*, fix/*, docs/*, chore/*, hotfix/*
+          if ! echo "$BRANCH" | grep -qE '^(feat|fix|docs|chore|hotfix|refactor|test)/[a-z0-9-]+$'; then
+            echo "❌ Nom de branche invalide : '$BRANCH'"
+            echo "Format attendu : feat/<nom-kebab-case>"
+            echo "Exemples valides : feat/ollama, fix/loki-config, docs/readme"
+            exit 1
+          fi
+          echo "✅ Nom de branche valide"
+
+      - name: Check commit messages
+        run: |
+          # Récupère tous les commits de la PR
+          COMMITS=$(git log origin/${{ github.base_ref }}..HEAD --format="%s")
+          echo "Commits à vérifier :"
+          echo "$COMMITS"
+          echo "---"
+
+          FAILED=0
+          while IFS= read -r msg; do
+            # Conventional commits : type(scope): description
+            if ! echo "$msg" | grep -qE '^(feat|fix|docs|chore|refactor|test|ci|perf|hotfix)(\([a-z0-9-]+\))?: .{1,100}$'; then
+              echo "❌ Commit invalide : '$msg'"
+              echo "   Format attendu : feat(scope): description"
+              echo "   Types valides  : feat, fix, docs, chore, refactor, test, ci, perf, hotfix"
+              FAILED=1
+            else
+              echo "✅ $msg"
+            fi
+          done <<< "$COMMITS"
+
+          if [ "$FAILED" -eq 1 ]; then
+            exit 1
+          fi
