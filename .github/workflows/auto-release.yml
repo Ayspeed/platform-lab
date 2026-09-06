@@ -1,0 +1,44 @@
+name: Auto Release
+
+on:
+  schedule:
+    # Tous les lundis à 9h00
+    - cron: '0 9 * * 1'
+  workflow_dispatch:  # déclenchement manuel possible
+
+jobs:
+  release:
+    name: Merge develop → main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if develop is ahead of main
+        id: check
+        run: |
+          git fetch origin
+          AHEAD=$(git rev-list origin/main..origin/develop --count)
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+          echo "develop est $AHEAD commits devant main"
+
+      - name: Create PR develop → main
+        if: steps.check.outputs.ahead != '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: develop
+          title: "chore(release): merge develop → main"
+          body: |
+            ## Auto-release hebdomadaire
+
+            Cette PR est générée automatiquement chaque lundi.
+
+            Elle merge `develop` dans `main` si des changements sont présents.
+
+            **Vérifie et merge manuellement si tout est bon.**
+          labels: release
